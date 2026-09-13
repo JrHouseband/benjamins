@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BENJAMINS ★ Ideas & Feedback</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&display=swap" rel="stylesheet">
+<style>
+
+  /* ============================================================
+     CONFIG — paste your Google Apps Script Web App URL below.
+     See benjamins-apps-script.gs for the backend setup steps.
+     ============================================================ */
+
+  :root{
+    --black: #000000;
+    --white: #FFFFFF;
+    --gray: #C0C0C0;
+    --gray-dark: #808080;
+    --gray-light: #E8E8E8;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0;
+    padding:0;
+    background: var(--white);
+    color: var(--black);
+    font-family: "Times New Roman", Times, serif;
+    font-size: 17px;
+  }
+
+  body{
+    background-image:
+      repeating-linear-gradient(45deg, var(--gray-light) 0, var(--gray-light) 1px, transparent 1px, transparent 14px);
+    background-color: var(--white);
+  }
+
+  .page{
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 20px 16px 60px;
+  }
+
+  /* ---------- Masthead ---------- */
+  .masthead-box{
+    border: 3px double var(--black);
+    background: var(--white);
+    padding: 18px 20px 14px;
+    text-align: center;
+  }
+
+  .masthead-box h1{
+    font-family: 'Archivo Black', sans-serif;
+    font-size: clamp(2rem, 8vw, 3.2rem);
+    letter-spacing: 0.02em;
+    margin: 0 0 4px;
+    color: var(--black);
+  }
+
+  .api-banner{
+    border: 2px solid var(--black);
+    background: #FFF9C4;
+    padding: 10px 14px;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.78rem;
+    margin: 16px 0;
+  }
+
+  /* ---------- Tabs ---------- */
+  .tabs{
+    display:flex;
+    gap: 2px;
+    margin-top: 20px;
+    padding-left: 2px;
+  }
+
+  .tab{
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 0.85rem;
+    color: var(--black);
+    background: var(--gray);
+    border: 2px outset var(--white);
+    padding: 10px 20px;
+    cursor: pointer;
+    position: relative;
+    top: 2px;
+  }
+
+  .tab:hover{ background: var(--gray-light); }
+
+  .tab[aria-selected="true"]{
+    background: var(--white);
+    border-bottom: 2px solid var(--white);
+    border-top: 2px solid var(--black);
+    border-left: 2px solid var(--black);
+    border-right: 2px solid var(--black);
+    top: 2px;
+  }
+
+  .tab-count{
+    font-family: "Courier New", Courier, monospace;
+    font-weight: normal;
+    font-size: 0.75rem;
+    margin-left: 6px;
+  }
+
+  .panel-wrap{
+    border: 2px solid var(--black);
+    background: var(--white);
+    padding: 22px 20px 8px;
+  }
+
+  .panel{ display:none; }
+  .panel.active{ display:block; }
+
+  .panel-intro{
+    font-size: 0.92rem;
+    margin: 0 0 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed var(--black);
+  }
+
+  /* ---------- Composer ---------- */
+  form.composer{
+    display:flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 22px;
+    border: 1px solid var(--black);
+    padding: 14px;
+    background: var(--gray-light);
+  }
+
+  .composer label{
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+  }
+
+  .composer input[type="text"],
+  .composer textarea{
+    width: 100%;
+    background: var(--white);
+    border: 2px inset var(--gray);
+    color: var(--black);
+    font-family: "Times New Roman", Times, serif;
+    font-size: 0.96rem;
+    padding: 8px 10px;
+    resize: vertical;
+  }
+
+  .composer textarea{ min-height: 70px; }
+
+  .composer input:focus,
+  .composer textarea:focus,
+  .tab:focus-visible,
+  button:focus-visible{
+    outline: 2px solid var(--black);
+    outline-offset: 1px;
+  }
+
+  .composer-row{
+    display:flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .status-msg{
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.72rem;
+    color: var(--gray-dark);
+  }
+
+  .btn{
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 0.78rem;
+    color: var(--black);
+    background: var(--gray);
+    border: 2px outset var(--white);
+    padding: 9px 18px;
+    cursor: pointer;
+  }
+
+  .btn:active{ border-style: inset; }
+
+  /* ---------- Entries ---------- */
+  .ledger{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .entry{
+    display: grid;
+    grid-template-columns: 50px 1fr;
+    gap: 14px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--black);
+  }
+
+  .entry:last-child{ border-bottom: none; }
+
+  .tally{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding-top: 2px;
+  }
+
+  .heart-btn{
+    background: var(--gray-light);
+    border: 2px outset var(--white);
+    color: var(--black);
+    width: 40px;
+    height: 34px;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .heart-btn:active{ border-style: inset; }
+
+  .heart-btn.liked{
+    color: #CC0000;
+    background: var(--gray);
+  }
+
+  .tally .value{
+    font-family: "Courier New", Courier, monospace;
+    font-weight: bold;
+    font-size: 0.82rem;
+  }
+
+  .entry-body h3{
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 1rem;
+    margin: 2px 0 6px;
+  }
+
+  .entry-body p{
+    margin: 0 0 8px;
+    font-size: 0.94rem;
+  }
+
+  .entry-meta{
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.72rem;
+    color: var(--gray-dark);
+    display:flex;
+    gap: 8px;
+    align-items:center;
+  }
+
+  .staff-list{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .staff-list li{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    padding: 12px 2px;
+    border-bottom: 1px solid var(--black);
+  }
+
+  .staff-list li:last-child{ border-bottom: none; }
+
+  .staff-list .role{
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.86rem;
+  }
+
+  .staff-list .name{
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 0.94rem;
+    text-align: right;
+  }
+
+  .empty-state{
+    padding: 26px 2px 20px;
+    font-size: 0.92rem;
+    color: var(--gray-dark);
+    border-bottom: 1px solid var(--black);
+  }
+
+  .empty-state strong{
+    display:block;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 1rem;
+    margin-bottom: 6px;
+    color: var(--black);
+  }
+
+  footer{
+    margin-top: 26px;
+    text-align: center;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.72rem;
+    color: var(--gray-dark);
+  }
+
+  hr.old{
+    border: none;
+    border-top: 4px double var(--black);
+    margin: 22px 0;
+  }
+
+  @media (max-width: 480px){
+    .entry{ grid-template-columns: 48px 1fr; gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="masthead-box">
+    <h1>BENJAMINS</h1>
+  </div>
+
+  <div id="apiBanner" class="api-banner" style="display:none;">
+    NOTICE: no API_URL is set, so this board is running on sample data only.
+    Open benjamins-forum.html, find the API_URL constant near the top of the
+    &lt;script&gt; tag, and paste in your Google Apps Script Web App URL.
+    See benjamins-apps-script.gs for setup steps.
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Forum sections">
+    <button class="tab" role="tab" id="tab-ideas" aria-selected="true" aria-controls="panel-ideas" onclick="switchTab('ideas')">
+      IDEAS <span class="tab-count" id="count-ideas">0</span>
+    </button>
+    <button class="tab" role="tab" id="tab-feedback" aria-selected="false" aria-controls="panel-feedback" onclick="switchTab('feedback')">
+      FEEDBACK <span class="tab-count" id="count-feedback">0</span>
+    </button>
+    <button class="tab" role="tab" id="tab-staff" aria-selected="false" aria-controls="panel-staff" onclick="switchTab('staff')">
+      COMPANY STAFF
+    </button>
+  </div>
+
+  <div class="panel-wrap">
+
+    <!-- IDEAS PANEL -->
+    <section class="panel active" id="panel-ideas" role="tabpanel" aria-labelledby="tab-ideas">
+      <p class="panel-intro">New concepts, features, or plans worth trying. Pitch it in a sentence or two.</p>
+
+      <form class="composer" onsubmit="return addEntry(event, 'ideas')">
+        <label for="ideas-title">Headline</label>
+        <input type="text" id="ideas-title" name="title" placeholder="Give your idea a headline" required maxlength="80">
+        <label for="ideas-body">Details</label>
+        <textarea id="ideas-body" name="body" placeholder="What's the idea, and why does it matter?" required maxlength="600"></textarea>
+        <label for="ideas-author">Your name (optional)</label>
+        <input type="text" id="ideas-author" name="author" placeholder="Anonymous" maxlength="40">
+        <div class="composer-row">
+          <span class="status-msg" id="status-ideas"></span>
+          <button type="submit" class="btn">POST IDEA →</button>
+        </div>
+      </form>
+
+      <ul class="ledger" id="list-ideas"></ul>
+    </section>
+
+    <!-- FEEDBACK PANEL -->
+    <section class="panel" id="panel-feedback" role="tabpanel" aria-labelledby="tab-feedback">
+      <p class="panel-intro">What's working, what isn't, and what should change. Be direct.</p>
+
+      <form class="composer" onsubmit="return addEntry(event, 'feedback')">
+        <label for="feedback-title">Headline</label>
+        <input type="text" id="feedback-title" name="title" placeholder="Sum up your feedback" required maxlength="80">
+        <label for="feedback-body">Details</label>
+        <textarea id="feedback-body" name="body" placeholder="What happened, and what would you change?" required maxlength="600"></textarea>
+        <label for="feedback-author">Your name (optional)</label>
+        <input type="text" id="feedback-author" name="author" placeholder="Anonymous" maxlength="40">
+        <div class="composer-row">
+          <span class="status-msg" id="status-feedback"></span>
+          <button type="submit" class="btn">POST FEEDBACK →</button>
+        </div>
+      </form>
+
+      <ul class="ledger" id="list-feedback"></ul>
+    </section>
+
+    <!-- COMPANY STAFF PANEL -->
+    <section class="panel" id="panel-staff" role="tabpanel" aria-labelledby="tab-staff">
+      <p class="panel-intro">Who's who at Benjamins.</p>
+
+      <ul class="staff-list">
+        <li><span class="role">CEO</span><span class="name">Kylan</span></li>
+        <li><span class="role">COO</span><span class="name">Ellie</span></li>
+        <li><span class="role">Manager / Producer / Owner</span><span class="name">Joanna</span></li>
+        <li><span class="role">Head Security</span><span class="name">Kameron</span></li>
+        <li><span class="role">Security</span><span class="name">Owen</span></li>
+        <li><span class="role">Idea Person</span><span class="name">Avery</span></li>
+        <li><span class="role">Printer / Salesman</span><span class="name">Emma</span></li>
+        <li><span class="role">Salesman</span><span class="name">Javier</span></li>
+        <li><span class="role">Salesman</span><span class="name">Jacob</span></li>
+      </ul>
+    </section>
+
+  </div>
+
+  <hr class="old">
+  <footer>© BENJAMINS MESSAGE BOARD — best viewed with any browser, any resolution</footer>
+
+</div>
+
+<script>
+  /* ============================================================
+     PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE:
+     ============================================================ */
+  const API_URL = "https://script.google.com/macros/s/AKfycbyEUKwpQ2tFLgm61Pd9umN-yyOByaNMLknXSo6XwnY_g8KVOZXaOJ24kif-ROE_sQq1/exec";
+
+  const USING_API = API_URL && API_URL.indexOf("PASTE_YOUR") === -1;
+
+  const store = { ideas: [], feedback: [] };
+
+  const LIKED_KEY = "benjamins_liked_ids";
+
+  function getLikedIds(){
+    try{
+      const raw = localStorage.getItem(LIKED_KEY);
+      return new Set(raw ? JSON.parse(raw) : []);
+    } catch(e){
+      return new Set();
+    }
+  }
+
+  function saveLikedIds(set){
+    try{
+      localStorage.setItem(LIKED_KEY, JSON.stringify(Array.from(set)));
+    } catch(e){
+      // storage unavailable — likes just won't be remembered across reloads
+    }
+  }
+
+  let likedIds = getLikedIds();
+
+  const sampleData = {
+    ideas: [
+      { id: 1, title: "Weekly show-and-tell thread", body: "A standing thread where anyone can drop a screenshot or link of something they made this week.", votes: 12, author: "R. Okafor", time: "2 days ago" },
+      { id: 2, title: "Shared prompt library", body: "Collect the prompts and templates people already use so newcomers don't start from zero.", votes: 8, author: "M. Alvarez", time: "3 days ago" }
+    ],
+    feedback: [
+      { id: 3, title: "Search is too slow on mobile", body: "Takes 4-5 seconds to return results on a normal connection. Worth profiling before the next release.", votes: 9, author: "J. Kwan", time: "1 day ago" }
+    ]
+  };
+
+  async function loadEntries(){
+    if (!USING_API){
+      document.getElementById("apiBanner").style.display = "block";
+      store.ideas = sampleData.ideas.slice();
+      store.feedback = sampleData.feedback.slice();
+      render("ideas");
+      render("feedback");
+      return;
+    }
+
+    try{
+      const res = await fetch(API_URL);
+      const data = await res.json();
+      store.ideas = data.filter(e => e.section === "ideas");
+      store.feedback = data.filter(e => e.section === "feedback");
+    } catch(err){
+      console.error("Failed to load entries:", err);
+      setStatus("ideas", "couldn't reach the sheet — showing nothing.");
+      setStatus("feedback", "couldn't reach the sheet — showing nothing.");
+    }
+    render("ideas");
+    render("feedback");
+  }
+
+  function setStatus(section, msg){
+    const el = document.getElementById(`status-${section}`);
+    if (el) el.textContent = msg;
+    if (msg) setTimeout(() => { if (el) el.textContent = ""; }, 4000);
+  }
+
+  function render(section){
+    const list = document.getElementById(`list-${section}`);
+    list.innerHTML = "";
+
+    if (store[section].length === 0){
+      list.innerHTML = `<li class="empty-state"><strong>NOTHING HERE YET.</strong>Be the first to post.</li>`;
+      document.getElementById(`count-${section}`).textContent = "0";
+      return;
+    }
+
+    store[section]
+      .slice()
+      .sort((a,b) => b.votes - a.votes)
+      .forEach(entry => {
+        const li = document.createElement("li");
+        li.className = "entry";
+        const liked = likedIds.has(String(entry.id));
+        li.innerHTML = `
+          <div class="tally">
+            <button type="button" class="heart-btn ${liked ? "liked" : ""}" aria-label="Like" aria-pressed="${liked ? "true" : "false"}" onclick="toggleLike('${section}', '${entry.id}')">${liked ? "♥" : "♡"}</button>
+            <span class="value">${entry.votes}</span>
+          </div>
+          <div class="entry-body">
+            <h3>${escapeHtml(entry.title)}</h3>
+            <p>${escapeHtml(entry.body)}</p>
+            <div class="entry-meta">
+              <span>${escapeHtml(entry.author || "Anonymous")}</span>
+              <span>·</span>
+              <span>${escapeHtml(entry.time || "")}</span>
+            </div>
+          </div>
+        `;
+        list.appendChild(li);
+      });
+
+    document.getElementById(`count-${section}`).textContent = store[section].length;
+  }
+
+  async function toggleLike(section, id){
+    const entry = store[section].find(e => String(e.id) === String(id));
+    if (!entry) return;
+
+    const wasLiked = likedIds.has(String(id));
+    const delta = wasLiked ? -1 : 1;
+
+    if (wasLiked){
+      likedIds.delete(String(id));
+    } else {
+      likedIds.add(String(id));
+    }
+    saveLikedIds(likedIds);
+
+    entry.votes += delta;
+    render(section);
+
+    if (USING_API){
+      try{
+        await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "vote", id: id, delta: delta })
+        });
+      } catch(err){
+        console.error("Like failed to save:", err);
+      }
+    }
+  }
+
+  async function addEntry(event, section){
+    event.preventDefault();
+    const form = event.target;
+    const title = form.title.value.trim();
+    const body = form.body.value.trim();
+    const author = form.author.value.trim() || "Anonymous";
+    if (!title || !body) return false;
+
+    setStatus(section, "posting...");
+
+    const tempEntry = { id: `temp-${Date.now()}`, section, title, body, votes: 0, author, time: "just now" };
+    store[section].unshift(tempEntry);
+    render(section);
+    form.reset();
+
+    if (USING_API){
+      try{
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "add", section, title, body, author })
+        });
+        const result = await res.json();
+        if (result && result.id){
+          tempEntry.id = result.id;
+        }
+        setStatus(section, "posted.");
+      } catch(err){
+        console.error("Post failed to save:", err);
+        setStatus(section, "posted locally — couldn't reach the sheet.");
+      }
+    } else {
+      setStatus(section, "posted (sample mode — not saved).");
+    }
+
+    return false;
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement("div");
+    div.textContent = str == null ? "" : String(str);
+    return div.innerHTML;
+  }
+
+  function switchTab(section){
+    ["ideas", "feedback", "staff"].forEach(s => {
+      document.getElementById(`tab-${s}`).setAttribute("aria-selected", s === section ? "true" : "false");
+      document.getElementById(`panel-${s}`).classList.toggle("active", s === section);
+    });
+  }
+
+  loadEntries();
+</script>
+
+</body>
+</html>
