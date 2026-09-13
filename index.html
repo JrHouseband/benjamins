@@ -20,6 +20,8 @@
     --gray: #C0C0C0;
     --gray-dark: #808080;
     --gray-light: #E8E8E8;
+    --desktop-teal: #008080;
+    --desktop-teal-dark: #006666;
   }
 
   *{ box-sizing: border-box; }
@@ -27,7 +29,7 @@
   html, body{
     margin:0;
     padding:0;
-    background: var(--white);
+    background: var(--desktop-teal);
     color: var(--black);
     font-family: "Times New Roman", Times, serif;
     font-size: 17px;
@@ -35,8 +37,8 @@
 
   body{
     background-image:
-      repeating-linear-gradient(45deg, var(--gray-light) 0, var(--gray-light) 1px, transparent 1px, transparent 14px);
-    background-color: var(--white);
+      repeating-linear-gradient(45deg, var(--desktop-teal-dark) 0, var(--desktop-teal-dark) 1px, transparent 1px, transparent 14px);
+    background-color: var(--desktop-teal);
   }
 
   .page{
@@ -300,6 +302,23 @@
     .loading-title{ animation: none; }
   }
 
+  .apply-box{
+    text-align: center;
+    padding: 30px 10px 20px;
+  }
+
+  .apply-text{
+    font-size: 0.94rem;
+    margin: 0 0 18px;
+  }
+
+  .apply-btn{
+    display: inline-block;
+    text-decoration: none;
+    font-size: 0.95rem;
+    padding: 12px 26px;
+  }
+
   .staff-list{
     list-style: none;
     margin: 0;
@@ -394,6 +413,9 @@
     <button class="tab" role="tab" id="tab-staff" aria-selected="false" aria-controls="panel-staff" onclick="switchTab('staff')">
       COMPANY STAFF
     </button>
+    <button class="tab" role="tab" id="tab-apply" aria-selected="false" aria-controls="panel-apply" onclick="switchTab('apply')">
+      APPLY FOR A JOB
+    </button>
   </div>
 
   <div class="panel-wrap">
@@ -456,6 +478,16 @@
       </ul>
     </section>
 
+    <!-- APPLY FOR A JOB PANEL -->
+    <section class="panel" id="panel-apply" role="tabpanel" aria-labelledby="tab-apply">
+      <p class="panel-intro">Want to work at Benjamins? Fill out the application form.</p>
+
+      <div class="apply-box">
+        <p class="apply-text">Click below to open the application form. It opens in a new tab.</p>
+        <a class="btn apply-btn" id="applyLink" href="#" target="_blank" rel="noopener">APPLY →</a>
+      </div>
+    </section>
+
   </div>
 
   <hr class="old">
@@ -468,6 +500,12 @@
      PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE:
      ============================================================ */
   const API_URL = "https://script.google.com/macros/s/AKfycbyEUKwpQ2tFLgm61Pd9umN-yyOByaNMLknXSo6XwnY_g8KVOZXaOJ24kif-ROE_sQq1/exec";
+
+  /* Paste your Google Form URL here (the "Send" link, not the edit link) */
+  const FORM_URL = "PASTE_YOUR_GOOGLE_FORM_URL_HERE";
+
+  document.getElementById("applyLink").href =
+    (FORM_URL && FORM_URL.indexOf("PASTE_YOUR") === -1) ? FORM_URL : "#";
 
   const USING_API = API_URL && API_URL.indexOf("PASTE_YOUR") === -1;
 
@@ -654,7 +692,7 @@
   }
 
   function switchTab(section){
-    ["ideas", "feedback", "staff"].forEach(s => {
+    ["ideas", "feedback", "staff", "apply"].forEach(s => {
       document.getElementById(`tab-${s}`).setAttribute("aria-selected", s === section ? "true" : "false");
       document.getElementById(`panel-${s}`).classList.toggle("active", s === section);
     });
