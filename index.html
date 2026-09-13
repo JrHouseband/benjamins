@@ -258,6 +258,48 @@
     align-items:center;
   }
 
+  .loading-screen{
+    position: fixed;
+    inset: 0;
+    background: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+
+  .loading-screen.hidden{ display: none; }
+
+  .loading-box{
+    border: 3px double var(--black);
+    padding: 26px 34px;
+    text-align: center;
+    background: var(--gray-light);
+  }
+
+  .loading-title{
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 1.1rem;
+    margin: 0 0 8px;
+    animation: blink-text 0.9s steps(1) infinite;
+  }
+
+  .loading-sub{
+    font-family: "Courier New", Courier, monospace;
+    font-size: 0.78rem;
+    color: var(--gray-dark);
+    margin: 0;
+  }
+
+  @keyframes blink-text{
+    0%, 49%{ opacity: 1; }
+    50%, 100%{ opacity: 0.3; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .loading-title{ animation: none; }
+  }
+
   .staff-list{
     list-style: none;
     margin: 0;
@@ -321,6 +363,13 @@
 </style>
 </head>
 <body>
+
+<div id="loadingScreen" class="loading-screen">
+  <div class="loading-box">
+    <p class="loading-title">LOADING BENJAMINS...</p>
+    <p class="loading-sub">please wait — fetching the board</p>
+  </div>
+</div>
 
 <div class="page">
 
@@ -396,13 +445,14 @@
       <ul class="staff-list">
         <li><span class="role">CEO</span><span class="name">Kylan</span></li>
         <li><span class="role">COO</span><span class="name">Ellie</span></li>
-        <li><span class="role">Manager / Producer / Owner</span><span class="name">Joanna</span></li>
+        <li><span class="role">Manager / Producer / Owner / Website Dev / Game Dev</span><span class="name">Joanna</span></li>
         <li><span class="role">Head Security</span><span class="name">Kameron</span></li>
         <li><span class="role">Security</span><span class="name">Owen</span></li>
         <li><span class="role">Idea Person</span><span class="name">Avery</span></li>
         <li><span class="role">Printer / Salesman</span><span class="name">Emma</span></li>
         <li><span class="role">Salesman</span><span class="name">Javier</span></li>
         <li><span class="role">Salesman</span><span class="name">Jacob</span></li>
+        <li><span class="role">Website Dev</span><span class="name">Aidan</span></li>
       </ul>
     </section>
 
@@ -461,6 +511,7 @@
       store.feedback = sampleData.feedback.slice();
       render("ideas");
       render("feedback");
+      hideLoadingScreen();
       return;
     }
 
@@ -476,6 +527,12 @@
     }
     render("ideas");
     render("feedback");
+    hideLoadingScreen();
+  }
+
+  function hideLoadingScreen(){
+    const el = document.getElementById("loadingScreen");
+    if (el) el.classList.add("hidden");
   }
 
   function setStatus(section, msg){
